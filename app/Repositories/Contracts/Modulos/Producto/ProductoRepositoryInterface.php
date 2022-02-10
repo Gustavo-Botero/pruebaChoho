@@ -39,4 +39,13 @@ interface ProductoRepositoryInterface
      * @return ProductoModel
      */
     public function find(int $id): ProductoModel;
+
+    /**
+     * Función para actualizar un producto
+     *
+     * @param integer $id
+     * @param Request $request
+     * @return ProductoModel
+     */
+    public function update(int $id, Request $request): ProductoModel;
 }

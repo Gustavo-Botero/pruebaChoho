@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\UseCases\Contracts\Modulos\Producto\ShowProductoInterface;
 use App\UseCases\Contracts\Modulos\Producto\CreateProductoInterface;
 use App\UseCases\Contracts\Modulos\Producto\DeleteProductoInterface;
+use App\UseCases\Contracts\Modulos\Producto\UpdateProductoInterface;
 use App\Repositories\Contracts\Modulos\Producto\ProductoRepositoryInterface;
 
 class ProductoController extends Controller
@@ -33,6 +34,13 @@ class ProductoController extends Controller
     protected $deleteProducto;
 
     /**
+     * Implementación de UpdateProductoInterface
+     *
+     * @var UpdateProductoInterface
+     */
+    protected $updateProducto;
+
+    /**
      * Implemenación de ProductoRepositoryInterface
      *
      * @var ProductoRepositoryInterface
@@ -45,17 +53,20 @@ class ProductoController extends Controller
      * @param CreateProductoInterface $createProducto
      * @param ShowProductoInterface $showProducto
      * @param DeleteProductoInterface $deleteProducto
+     * @param UpdateProductoInterface $updateProducto
      * @param ProductoRepositoryInterface $productoRepository
      */
     public function __construct(
         CreateProductoInterface $createProducto,
         ShowProductoInterface $showProducto,
         DeleteProductoInterface $deleteProducto,
+        UpdateProductoInterface $updateProducto,
         ProductoRepositoryInterface $productoRepository
     ) {
         $this->createProducto = $createProducto;
         $this->showProducto = $showProducto;
         $this->deleteProducto = $deleteProducto;
+        $this->updateProducto = $updateProducto;
         $this->productoRepository = $productoRepository;
     }
 
@@ -105,14 +116,14 @@ class ProductoController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Función para actualzar un producto
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param integer $id
+     * @return array
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): array
     {
-        //
+        return $this->updateProducto->handle($id, $request);
     }
 }
