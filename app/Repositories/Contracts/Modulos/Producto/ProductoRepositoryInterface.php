@@ -23,4 +23,12 @@ interface ProductoRepositoryInterface
      * @return ProductoModel
      */
     public function create(Request $request): ProductoModel;
+
+    /**
+     * Función para buscar un registro por id de la tabla producto
+     *
+     * @param integer $id
+     * @return ProductoModel
+     */
+    public function find(int $id): ProductoModel;
 }

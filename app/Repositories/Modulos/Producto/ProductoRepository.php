@@ -4,8 +4,8 @@ namespace App\Repositories\Modulos\Producto;
 
 use Illuminate\Http\Request;
 use App\Models\ProductoModel;
-use App\Repositories\Contracts\Modulos\Producto\ProductoRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
+use App\Repositories\Contracts\Modulos\Producto\ProductoRepositoryInterface;
 
 class ProductoRepository implements ProductoRepositoryInterface
 {
@@ -43,13 +43,24 @@ class ProductoRepository implements ProductoRepositoryInterface
      * @return ProductoModel
      */
     public function create(Request $request): ProductoModel
-    {   
+    {
         $producto = new $this->producto;
-        
+
         $producto->tipo = $request->data['tipo'];
         $producto->precio = $request->data['precio'];
         $producto->save();
 
         return $producto;
+    }
+
+    /**
+     * Función para buscar un registro por id de la tabla producto
+     *
+     * @param integer $id
+     * @return ProductoModel
+     */
+    public function find(int $id): ProductoModel
+    {
+        return $this->producto->find($id);
     }
 }
