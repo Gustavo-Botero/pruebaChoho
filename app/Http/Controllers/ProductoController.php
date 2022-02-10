@@ -6,6 +6,7 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\UseCases\Contracts\Modulos\Producto\ShowProductoInterface;
 use App\UseCases\Contracts\Modulos\Producto\CreateProductoInterface;
+use App\UseCases\Contracts\Modulos\Producto\DeleteProductoInterface;
 use App\Repositories\Contracts\Modulos\Producto\ProductoRepositoryInterface;
 
 class ProductoController extends Controller
@@ -25,6 +26,13 @@ class ProductoController extends Controller
     protected $showProducto;
 
     /**
+     * Implementación de DeleteProductoInterface
+     *
+     * @var DeleteProductoInterface
+     */
+    protected $deleteProducto;
+
+    /**
      * Implemenación de ProductoRepositoryInterface
      *
      * @var ProductoRepositoryInterface
@@ -36,27 +44,30 @@ class ProductoController extends Controller
      *
      * @param CreateProductoInterface $createProducto
      * @param ShowProductoInterface $showProducto
+     * @param DeleteProductoInterface $deleteProducto
      * @param ProductoRepositoryInterface $productoRepository
      */
     public function __construct(
         CreateProductoInterface $createProducto,
         ShowProductoInterface $showProducto,
+        DeleteProductoInterface $deleteProducto,
         ProductoRepositoryInterface $productoRepository
     ) {
         $this->createProducto = $createProducto;
         $this->showProducto = $showProducto;
+        $this->deleteProducto = $deleteProducto;
         $this->productoRepository = $productoRepository;
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Función para eliminar un registro de la tabla producto
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param integer $id
+     * @return array
      */
-    public function destroy($id)
+    public function destroy(int $id): array
     {
-        //
+        return $this->deleteProducto->handle($id);
     }
 
     /**

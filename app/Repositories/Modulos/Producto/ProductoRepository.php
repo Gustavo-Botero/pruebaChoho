@@ -54,6 +54,17 @@ class ProductoRepository implements ProductoRepositoryInterface
     }
 
     /**
+     * Función para eliminar un registro de la tabla productos
+     *
+     * @param integer $id
+     * @return boolean
+     */
+    public function delete(int $id): bool
+    {
+        return $this->find($id)->delete();
+    }
+
+    /**
      * Función para buscar un registro por id de la tabla producto
      *
      * @param integer $id

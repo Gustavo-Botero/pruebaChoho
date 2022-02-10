@@ -15,7 +15,7 @@ class MostrarProductoTest extends TestCase
     {
         // Metodo para que me muestre las excepciones
         $this->withoutExceptionHandling();
-        // Creamos los registros de la tabla pet_type
+        // Creamos los registros de la tabla
         $producto = ProductoModel::factory()->create();
         // probamos el endpoint
         $response = $this->getJson('/producto/' . $producto->id);
