@@ -27,6 +27,11 @@ class UseCaseServiceProvider extends ServiceProvider
             'App\UseCases\Contracts\Modulos\Producto\DeleteProductoInterface',
             'App\UseCases\Modulos\Producto\DeleteProductoUseCase'
         );
+
+        $this->app->bind(
+            'App\UseCases\Contracts\Modulos\Producto\UpdateProductoInterface',
+            'App\UseCases\Modulos\Producto\UpdateProductoUseCase'
+        );
     }
 
     /**

@@ -74,4 +74,21 @@ class ProductoRepository implements ProductoRepositoryInterface
     {
         return $this->producto->find($id);
     }
+
+    /**
+     * Función para actualizar un producto
+     *
+     * @param integer $id
+     * @param Request $request
+     * @return ProductoModel
+     */
+    public function update(int $id, Request $request): ProductoModel
+    {
+        $producto = $this->find($id);
+        $producto->tipo = $request->data['tipo'];
+        $producto->precio = $request->data['precio'];
+        $producto->update();
+
+        return $producto;
+    }
 }
