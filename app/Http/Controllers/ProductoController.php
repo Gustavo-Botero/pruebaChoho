@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
+use App\Models\ProductoModel;
 use Illuminate\Http\Request;
 use App\UseCases\Contracts\Modulos\Producto\CreateProductoInterface;
+use App\Repositories\Contracts\Modulos\Producto\ProductoRepositoryInterface;
 
 class ProductoController extends Controller
 {
@@ -15,14 +18,24 @@ class ProductoController extends Controller
     protected $createProducto;
 
     /**
+     * Implemenación de ProductoRepositoryInterface
+     *
+     * @var ProductoRepositoryInterface
+     */
+    protected $productoRepository;
+
+    /**
      * Inyección de dependencias
      *
      * @param CreateProductoInterface $createProducto
+     * @param ProductoRepositoryInterface $productoRepository
      */
     public function __construct(
-        CreateProductoInterface $createProducto
+        CreateProductoInterface $createProducto,
+        ProductoRepositoryInterface $productoRepository
     ) {
         $this->createProducto = $createProducto;
+        $this->productoRepository = $productoRepository;
     }
 
     /**
@@ -37,13 +50,15 @@ class ProductoController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Función que envía datos a la vista principal
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
-        //
+        $producto = $this->productoRepository->all();
+        
+        return view('producto.index', compact('producto'));
     }
 
     /**
