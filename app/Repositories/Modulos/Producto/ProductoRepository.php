@@ -5,6 +5,7 @@ namespace App\Repositories\Modulos\Producto;
 use Illuminate\Http\Request;
 use App\Models\ProductoModel;
 use App\Repositories\Contracts\Modulos\Producto\ProductoRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProductoRepository implements ProductoRepositoryInterface
 {
@@ -23,6 +24,16 @@ class ProductoRepository implements ProductoRepositoryInterface
     public function __construct(ProductoModel $producto)
     {
         $this->producto = $producto;
+    }
+
+    /**
+     * Obtener todos los registros de la tabla producto
+     *
+     * @return Collection
+     */
+    public function all(): Collection
+    {
+        return $this->producto->all();
     }
 
     /**
