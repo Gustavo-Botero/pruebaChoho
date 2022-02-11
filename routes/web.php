@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AsesorController;
 use App\Http\Controllers\ProductoController;
 
 /*
@@ -19,3 +20,4 @@ Route::get('/', function () {
 });
 
 Route::resource('/producto', ProductoController::class);
+Route::resource('/asesor', AsesorController::class);

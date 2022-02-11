@@ -17,6 +17,11 @@ class RepositoryServiceProvider extends ServiceProvider
             'App\Repositories\Contracts\Modulos\Producto\ProductoRepositoryInterface',
             'App\Repositories\Modulos\Producto\ProductoRepository'
         );
+
+        $this->app->bind(
+            'App\Repositories\Contracts\Modulos\Asesor\AsesorRepositoryInterface',
+            'App\Repositories\Modulos\Asesor\AsesorRepository'
+        );
     }
 
     /**
