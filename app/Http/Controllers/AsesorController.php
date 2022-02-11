@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
 use Illuminate\Http\Request;
+use App\UseCases\Contracts\Modulos\Asesor\ShowAsesorInterface;
 use App\UseCases\Contracts\Modulos\Asesor\CreateAsesorInterface;
+use App\Repositories\Contracts\Modulos\Asesor\AsesorRepositoryInterface;
 
 class AsesorController extends Controller
 {
@@ -15,14 +18,34 @@ class AsesorController extends Controller
     protected $createAsesor;
 
     /**
+     * Implementación de ShowAsesorInterface
+     *
+     * @var ShowAsesorInterface
+     */
+    protected $showAsesor;
+
+    /**
+     * Implementación de AsesorRepositoryInterface
+     *
+     * @var AsesorRepositoryInterface
+     */
+    protected $asesorRepository;
+
+    /**
      * Inyección de dependencias
      *
      * @param CreateAsesorInterface $createAsesor
+     * @param ShowAsesorInterface $showAsesor
+     * @param AsesorRepositoryInterface $asesorRepository
      */
     public function __construct(
-        CreateAsesorInterface $createAsesor
+        CreateAsesorInterface $createAsesor,
+        ShowAsesorInterface $showAsesor,
+        AsesorRepositoryInterface $asesorRepository
     ) {
         $this->createAsesor = $createAsesor;
+        $this->showAsesor = $showAsesor;
+        $this->asesorRepository = $asesorRepository;
     }
 
     /**
@@ -37,24 +60,25 @@ class AsesorController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Función para enviar la información necesaria a la vista principal
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
-        //
+        $asesor = $this->asesorRepository->all();
+        return view('asesor.index', compact('asesor'));
     }
 
     /**
-     * Display the specified resource.
+     * Función para consultar un asesor por id
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param integer $id
+     * @return array
      */
-    public function show($id)
+    public function show(int $id): array
     {
-        //
+        return $this->showAsesor->handle($id);
     }
 
     /**
