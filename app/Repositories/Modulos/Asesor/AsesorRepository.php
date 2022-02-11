@@ -67,4 +67,26 @@ class AsesorRepository implements AsesorRepositoryInterface
     {
         return $this->asesor->find($id);
     }
+
+    /**
+     * Función para actualizar un asesor
+     *
+     * @param integer $id
+     * @param Request $request
+     * @return AsesorModel
+     */
+    public function update(int $id, Request $request): AsesorModel
+    {
+        $asesor = $this->find($id);
+        $asesor->nombre = $request->data['nombre'];
+        $asesor->apellido = $request->data['apellido'];
+        $asesor->tipo_documento = $request->data['tipo_documento'];
+        $asesor->numero_documento = $request->data['numero_documento'];
+        $asesor->celular = $request->data['celular'];
+        $asesor->correo = $request->data['correo'];
+        $asesor->direccion = $request->data['direccion'];
+        $asesor->update();
+
+        return $asesor;
+    }
 }

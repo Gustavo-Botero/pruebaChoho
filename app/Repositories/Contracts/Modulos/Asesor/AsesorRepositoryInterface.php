@@ -31,4 +31,13 @@ interface AsesorRepositoryInterface
      * @return AsesorModel
      */
     public function find(int $id): AsesorModel;
+
+    /**
+     * Función para actualizar un asesor
+     *
+     * @param integer $id
+     * @param Request $request
+     * @return AsesorModel
+     */
+    public function update(int $id, Request $request): AsesorModel;
 }

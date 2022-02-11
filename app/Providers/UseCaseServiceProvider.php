@@ -42,6 +42,11 @@ class UseCaseServiceProvider extends ServiceProvider
             'App\UseCases\Contracts\Modulos\Asesor\ShowAsesorInterface',
             'App\UseCases\Modulos\Asesor\ShowAsesorUseCase'
         );
+
+        $this->app->bind(
+            'App\UseCases\Contracts\Modulos\Asesor\UpdateAsesorInterface',
+            'App\UseCases\Modulos\Asesor\UpdateAsesorUseCase'
+        );
     }
 
     /**

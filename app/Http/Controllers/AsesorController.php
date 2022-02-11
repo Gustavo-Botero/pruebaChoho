@@ -6,6 +6,7 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\UseCases\Contracts\Modulos\Asesor\ShowAsesorInterface;
 use App\UseCases\Contracts\Modulos\Asesor\CreateAsesorInterface;
+use App\UseCases\Contracts\Modulos\Asesor\UpdateAsesorInterface;
 use App\Repositories\Contracts\Modulos\Asesor\AsesorRepositoryInterface;
 
 class AsesorController extends Controller
@@ -25,6 +26,12 @@ class AsesorController extends Controller
     protected $showAsesor;
 
     /**
+     * Implementación de UpdateAsesorInterface
+     *
+     * @var UpdateAsesorInterface
+     */
+    protected $updateAsesor;
+    /**
      * Implementación de AsesorRepositoryInterface
      *
      * @var AsesorRepositoryInterface
@@ -36,15 +43,18 @@ class AsesorController extends Controller
      *
      * @param CreateAsesorInterface $createAsesor
      * @param ShowAsesorInterface $showAsesor
+     * @param UpdateAsesorInterface $updateAsesor
      * @param AsesorRepositoryInterface $asesorRepository
      */
     public function __construct(
         CreateAsesorInterface $createAsesor,
         ShowAsesorInterface $showAsesor,
+        UpdateAsesorInterface $updateAsesor,
         AsesorRepositoryInterface $asesorRepository
     ) {
         $this->createAsesor = $createAsesor;
         $this->showAsesor = $showAsesor;
+        $this->updateAsesor = $updateAsesor;
         $this->asesorRepository = $asesorRepository;
     }
 
@@ -93,14 +103,14 @@ class AsesorController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Función para actualizar un asesor
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param integer $id
+     * @return array
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): array
     {
-        //
+        return $this->updateAsesor->handle($id, $request);
     }
 }
