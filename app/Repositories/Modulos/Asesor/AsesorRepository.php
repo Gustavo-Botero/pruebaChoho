@@ -4,6 +4,7 @@ namespace App\Repositories\Modulos\Asesor;
 
 use App\Models\AsesorModel;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
 use App\Repositories\Contracts\Modulos\Asesor\AsesorRepositoryInterface;
 
 class AsesorRepository implements AsesorRepositoryInterface
@@ -26,6 +27,16 @@ class AsesorRepository implements AsesorRepositoryInterface
     }
 
     /**
+     * Función para obtener todos los registros
+     *
+     * @return Collection
+     */
+    public function all(): Collection
+    {
+        return $this->asesor->all();
+    }
+
+    /**
      * Función para crear un asesor
      *
      * @param Request $request
@@ -44,5 +55,16 @@ class AsesorRepository implements AsesorRepositoryInterface
         $asesor->save();
 
         return $asesor;
+    }
+
+    /**
+     * Función para consultar un asesor por id
+     *
+     * @param integer $id
+     * @return AsesorModel
+     */
+    public function find(int $id): AsesorModel
+    {
+        return $this->asesor->find($id);
     }
 }

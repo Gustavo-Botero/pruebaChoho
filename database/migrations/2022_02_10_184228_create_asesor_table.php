@@ -18,7 +18,7 @@ class CreateAsesorTable extends Migration
             $table->string('nombre');
             $table->string('apellido');
             $table->string('tipo_documento');
-            $table->integer('numero_documento')->unique();
+            $table->bigInteger('numero_documento')->unique();
             $table->bigInteger('celular');
             $table->string('correo')->unique();
             $table->string('direccion');
