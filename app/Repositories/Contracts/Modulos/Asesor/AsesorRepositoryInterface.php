@@ -25,6 +25,14 @@ interface AsesorRepositoryInterface
     public function create(Request $request): AsesorModel;
 
     /**
+     * Función para eliminar un asesor
+     *
+     * @param integer $id
+     * @return boolean
+     */
+    public function delete(int $id): bool;
+
+    /**
      * Función para consultar un asesor por id
      *
      * @param integer $id

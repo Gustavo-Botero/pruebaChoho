@@ -58,6 +58,17 @@ class AsesorRepository implements AsesorRepositoryInterface
     }
 
     /**
+     * Función para eliminar un asesor
+     *
+     * @param integer $id
+     * @return boolean
+     */
+    public function delete(int $id): bool
+    {
+        return $this->find($id)->delete();
+    }
+
+    /**
      * Función para consultar un asesor por id
      *
      * @param integer $id
