@@ -6,6 +6,7 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\UseCases\Contracts\Modulos\Asesor\ShowAsesorInterface;
 use App\UseCases\Contracts\Modulos\Asesor\CreateAsesorInterface;
+use App\UseCases\Contracts\Modulos\Asesor\DeleteAsesorInterface;
 use App\UseCases\Contracts\Modulos\Asesor\UpdateAsesorInterface;
 use App\Repositories\Contracts\Modulos\Asesor\AsesorRepositoryInterface;
 
@@ -26,11 +27,19 @@ class AsesorController extends Controller
     protected $showAsesor;
 
     /**
+     * Implementación de DeleteAsesorInterface
+     *
+     * @var DeleteAsesorInterface
+     */
+    protected $deleteAsesor;
+
+    /**
      * Implementación de UpdateAsesorInterface
      *
      * @var UpdateAsesorInterface
      */
     protected $updateAsesor;
+
     /**
      * Implementación de AsesorRepositoryInterface
      *
@@ -43,30 +52,33 @@ class AsesorController extends Controller
      *
      * @param CreateAsesorInterface $createAsesor
      * @param ShowAsesorInterface $showAsesor
+     * @param DeleteAsesorInterface $deleteAsesor
      * @param UpdateAsesorInterface $updateAsesor
      * @param AsesorRepositoryInterface $asesorRepository
      */
     public function __construct(
         CreateAsesorInterface $createAsesor,
         ShowAsesorInterface $showAsesor,
+        DeleteAsesorInterface $deleteAsesor,
         UpdateAsesorInterface $updateAsesor,
         AsesorRepositoryInterface $asesorRepository
     ) {
         $this->createAsesor = $createAsesor;
         $this->showAsesor = $showAsesor;
+        $this->deleteAsesor = $deleteAsesor;
         $this->updateAsesor = $updateAsesor;
         $this->asesorRepository = $asesorRepository;
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Función para eliminar un asesors
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param integer $id
+     * @return array
      */
-    public function destroy($id)
+    public function destroy(int $id): array
     {
-        //
+        return $this->deleteAsesor->handle($id);
     }
 
     /**
