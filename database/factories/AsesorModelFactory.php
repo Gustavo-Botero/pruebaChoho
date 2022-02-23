@@ -14,7 +14,6 @@ class AsesorModelFactory extends Factory
     public function definition()
     {
         return [
-            // 'id' => $this->faker->unique()->numberBetween(1,5),
             'nombre' => $this->faker->firstName(),
             'apellido' => $this->faker->lastName(),
             'tipo_documento' => $this->faker->randomElement(['CC', 'CE', 'PT']),
