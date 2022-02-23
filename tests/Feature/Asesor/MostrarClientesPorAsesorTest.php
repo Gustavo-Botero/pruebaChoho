@@ -22,11 +22,14 @@ class MostrarClientesPorAsesorTest extends TestCase
         
         // Creamos los registros para prueba
         $asesor = AsesorModel::factory(5)->create();
-        $cliente = ClienteModel::factory(9)->create();
+        $clientes = ClienteModel::factory(9)->create();
         $factura = FacturaModel::factory(9)->create();
         $producto = ProductoModel::factory(10)->create();
         $detallePedido = DetallePedidoModel::factory(15)->create();
         
+        $cliente = ClienteModel::where('asesor_id', '=', $asesor[0]->id)->get();
+        $totalPedidos = [];//FacturaModel::where('cliente_id', '=', $cliente[0]->id)->get();
+
         // probamos el endpoint
         $response = $this->getJson('/asesor/clientes/' . $asesor[0]->id);
         
@@ -36,12 +39,10 @@ class MostrarClientesPorAsesorTest extends TestCase
         // Revisamos de que la respuesta sea lo esperado
         $response->assertExactJson([
             'data' => [
-                'id' => $asesor[0]->id,
-                'name' => $asesor[0]->name,
-                'age' => $asesor[0]->age,
-                'race' => $asesor[0]->race,
-                'pet_type_id' => $asesor[0]->pet_type_id,
-                'description' => $asesor[0]->description
+                'cod_asesor' => $asesor[0]->id,
+                'name' => $asesor[0]->nombre  . ' ' . $asesor[0]->apellido,
+                'clientes_asignados' => count($cliente),
+                'total_pedidos' => $totalPedidos
             ]
         ]);
     }
