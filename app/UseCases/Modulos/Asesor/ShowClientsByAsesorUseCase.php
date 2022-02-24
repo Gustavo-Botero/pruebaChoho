@@ -39,8 +39,7 @@ class ShowClientsByAsesorUseCase implements ShowClientsByAsesorInterface
         $detalleProductoArray = [];
         $asesor = $this->asesorRepository->find($id);
         $clientesByAsesor = $this->clienteRepository->showClientsByAsesor($id);
-        $numClientes = count($clientesByAsesor);
-
+        
         foreach ($clientesByAsesor as $cliente) {
             $detallePedidosArray = [];
             
@@ -95,7 +94,7 @@ class ShowClientsByAsesorUseCase implements ShowClientsByAsesorInterface
         $response['data'] = [
             'cod_asesor' => $asesor->id,
             'name' => $asesor->nombre . ' ' . $asesor->apellido,
-            'clientes_asignados' => $numClientes,
+            'clientes_asignados' => count($clientesByAsesor),
             'total_pedidos' => $facturaCliente,
             'clientes' => $clientesArray
         ];
