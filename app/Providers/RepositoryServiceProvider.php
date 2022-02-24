@@ -22,6 +22,11 @@ class RepositoryServiceProvider extends ServiceProvider
             'App\Repositories\Contracts\Modulos\Asesor\AsesorRepositoryInterface',
             'App\Repositories\Modulos\Asesor\AsesorRepository'
         );
+
+        $this->app->bind(
+            'App\Repositories\Contracts\Modulos\Cliente\ClienteRepositoryInterface',
+            'App\Repositories\Modulos\Cliente\ClienteRepository'
+        );
     }
 
     /**

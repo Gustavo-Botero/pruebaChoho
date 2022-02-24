@@ -4,6 +4,7 @@ namespace Tests\Feature\Asesor;
 
 use Tests\TestCase;
 use App\Models\AsesorModel;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -34,5 +35,11 @@ class ListarAsesorTest extends TestCase
         
         // Enviar datos a la vista
         $response->assertViewHas('asesor', $asesor->all());
+
+        // Eliminando los registros y dejando el auto_increment en iniciando desde 1
+        while (count($asesor->all()->toArray()) != 0) {
+            $asesor->first()->delete();
+        }
+        DB::statement("ALTER TABLE asesor AUTO_INCREMENT =  1");
     }
 }

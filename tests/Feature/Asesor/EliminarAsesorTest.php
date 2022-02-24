@@ -4,6 +4,7 @@ namespace Tests\Feature\Asesor;
 
 use Tests\TestCase;
 use App\Models\AsesorModel;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -36,5 +37,8 @@ class EliminarAsesorTest extends TestCase
             'title' => 'El asesor fue eliminado correctamente.',
             'limpForm' => 'asesor'
         ]);
+
+        // Dejando el auto_increment en iniciando desde 1
+        DB::statement("ALTER TABLE asesor AUTO_INCREMENT =  1");
     }
 }

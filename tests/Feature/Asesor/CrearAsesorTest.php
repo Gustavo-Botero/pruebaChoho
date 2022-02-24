@@ -4,6 +4,7 @@ namespace Tests\Feature\Asesor;
 
 use Tests\TestCase;
 use App\Models\AsesorModel;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -16,6 +17,8 @@ class CrearAsesorTest extends TestCase
         // Metodo para que me muestre las excepciones
         $this->withoutExceptionHandling();
         
+        $asesor = new AsesorModel();
+
         // probando el endpoint
         $response = $this->postJson('/asesor', [
             'data' => [
@@ -33,8 +36,7 @@ class CrearAsesorTest extends TestCase
         $response->assertOk();
         
         // Revisamos de que tengamos al menos un registro en la tabla
-        $asesor = AsesorModel::all();
-        $this->assertCount(1, $asesor);
+        $this->assertCount(1, $asesor->all());
         
         // Comparamos si es lo que guardamos
         $response->assertExactJson([
@@ -43,14 +45,18 @@ class CrearAsesorTest extends TestCase
             'title' => 'Asesor guardado correctamente',
             'limpForm' => 'asesor',
             'data' => [
-                'nombre' => $asesor[0]->nombre,
-                'apellido' => $asesor[0]->apellido,
-                'tipo_documento' => $asesor[0]->tipo_documento,
-                'numero_documento' => $asesor[0]->numero_documento,
-                'celular' => $asesor[0]->cedular,
-                'correo' => $asesor[0]->correo,
-                'direccion' => $asesor[0]->direccion
+                'nombre' => $asesor->first()->nombre,
+                'apellido' => $asesor->first()->apellido,
+                'tipo_documento' => $asesor->first()->tipo_documento,
+                'numero_documento' => $asesor->first()->numero_documento,
+                'celular' => $asesor->first()->cedular,
+                'correo' => $asesor->first()->correo,
+                'direccion' => $asesor->first()->direccion
             ]
         ]);
+        
+        // Eliminando los registros y dejando el auto_increment en iniciando desde 1
+        $asesor->first()->delete();
+        DB::statement("ALTER TABLE asesor AUTO_INCREMENT =  1");
     }
 }
