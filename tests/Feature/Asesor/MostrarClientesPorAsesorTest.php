@@ -48,6 +48,7 @@ class MostrarClientesPorAsesorTest extends TestCase
         $detalleProductoArray = [];
         
         foreach ($cliente as $rowCliente) {
+            $detallePedidosArray = [];
             $facturas = $factura->where('cliente_id', '=', $rowCliente['id'])->get();
             
             $facturaCliente = $facturaCliente + count($facturas);
@@ -84,13 +85,13 @@ class MostrarClientesPorAsesorTest extends TestCase
                     ]
                 );
             }
-
+            
             array_push(
                 $clientesArray,
                 [
-                    'id_cliente' => $cliente['id'],
+                    'id_cliente' => $rowCliente['id'],
                     'total_pedidos' => count($facturas),
-                    'name' => $cliente['nombre'],
+                    'name' => $rowCliente['nombre'],
                     'detalle_pedidos' => $detallePedidosArray
                 ]
             );
