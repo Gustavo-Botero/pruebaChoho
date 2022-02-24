@@ -4,6 +4,7 @@ namespace Tests\Feature\Asesor;
 
 use Tests\TestCase;
 use App\Models\AsesorModel;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -19,7 +20,7 @@ class ActualizarAsesorTest extends TestCase
         // Datos de prueba
         $asesorMosel = new AsesorModel;
         $asesor = $asesorMosel->factory()->create();
-        
+
         // probando el endpoint
         $response = $this->putJson('/asesor/' . $asesor->id, [
             'data' => [
@@ -58,5 +59,9 @@ class ActualizarAsesorTest extends TestCase
                 'direccion' => $asesor->direccion
             ]
         ]);
+        
+        // Eliminando los registros y dejando el auto_increment en iniciando desde 1
+        $asesor->delete();
+        DB::statement("ALTER TABLE asesor AUTO_INCREMENT =  1");
     }
 }

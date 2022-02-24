@@ -21,3 +21,4 @@ Route::get('/', function () {
 
 Route::resource('/producto', ProductoController::class);
 Route::resource('/asesor', AsesorController::class);
+Route::get('/asesor/clientes/{id}', [AsesorController::class, 'showClientsByAsesor'])->name('asesor.showClientsByAsesor');
