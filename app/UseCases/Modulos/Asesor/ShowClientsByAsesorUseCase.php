@@ -2,11 +2,13 @@
 
 namespace App\UseCases\Modulos\Asesor;
 
-use App\Models\DetallePedidoModel;
 use App\Models\FacturaModel;
+use App\Models\DetallePedidoModel;
 use App\UseCases\Contracts\Modulos\Asesor\ShowClientsByAsesorInterface;
 use App\Repositories\Contracts\Modulos\Asesor\AsesorRepositoryInterface;
 use App\Repositories\Contracts\Modulos\Cliente\ClienteRepositoryInterface;
+
+use function PHPUnit\Framework\isEmpty;
 
 class ShowClientsByAsesorUseCase implements ShowClientsByAsesorInterface
 {
@@ -31,43 +33,73 @@ class ShowClientsByAsesorUseCase implements ShowClientsByAsesorInterface
      */
     public function handle(int $id): array
     {
-        $facturaCliente = '';
+        $facturaCliente = 0;
+        $clientesArray = [];
+        $detallePedidosArray = [];
+        $detalleProductoArray = [];
         $asesor = $this->asesorRepository->find($id);
-        $clientes = $this->clienteRepository->showClientsByAsesor($id);
-        $numClientes = count($clientes);
-        foreach ($clientes as $cliente) {
-            var_dump('cliente id ' . $cliente['id']);
-            
-            $facturas = FacturaModel::find($cliente['id'])->toArray();
-            var_dump($facturas);
-            var_dump(count($facturas));
-            // $facturaCliente = $facturaCliente + count($facturas);
-            // $facturaCliente[] = $factura['id'];
-            // var_dump('Facturas id ' . $facturas['id']);
-            // foreach ($facturas as $factura) {
-            //     dd($factura);
-            //     var_dump($factura);
-            //     var_dump('factura id' . $factura['id']);
-            //     $pedido = DetallePedidoModel::find($factura['id']);
-            //     var_dump('pedido' . $pedido);
-            // }
-        }
-        // dd($facturaCliente);
-        $totalPedidos = [];//count($facturas);
+        $clientesByAsesor = $this->clienteRepository->showClientsByAsesor($id);
+        $numClientes = count($clientesByAsesor);
 
-        // var_dump($clientes);
-        // dd($clientes);
+        foreach ($clientesByAsesor as $cliente) {
+            $detallePedidosArray = [];
+            
+            $facturas = FacturaModel::where('cliente_id', '=', $cliente['id'])->get()->toArray();
+            $facturaCliente = $facturaCliente + count($facturas);
+
+            foreach ($facturas as $factura) {
+                $detallePedido = DetallePedidoModel::join('producto as p', 'p.id', '=', 'detalle_pedido.producto_id')
+                    ->select(
+                        'detalle_pedido.*',
+                        'p.tipo as tipo',
+                        'p.precio as precio'
+                    )
+                    ->where('detalle_pedido.factura_id', $factura['id'])->get()->toArray();
+
+                $detalleProductoArray = [];
+                foreach ($detallePedido as $key => $detalle) {
+
+                    array_push(
+                        $detalleProductoArray,
+                        [
+                            'id_producto' => $detalle['producto_id'],
+                            'tipo' => $detalle['tipo'],
+                            'cantidad' => $detalle['cantidad'],
+                            'valor_unitario' => $detalle['precio']
+                        ]
+                    );
+                }
+
+                array_push(
+                    $detallePedidosArray,
+                    [
+                        'id_pedido' => $factura['id'],
+                        'total_productos' => count($detallePedido),
+                        'fecha' => !isEmpty($detallePedido) ?  $detallePedido[0]['created_at'] : '',
+                        'productos' => $detalleProductoArray
+                    ]
+                );
+            }
+
+            array_push(
+                $clientesArray,
+                [
+                    'id_cliente' => $cliente['id'],
+                    'total_pedidos' => count($facturas),
+                    'name' => $cliente['nombre'],
+                    'detalle_pedidos' => $detallePedidosArray
+                ]
+            );
+        }
+        
         $response['data'] = [
             'cod_asesor' => $asesor->id,
-            'name' => $asesor->nombre .' '. $asesor->apellido,
+            'name' => $asesor->nombre . ' ' . $asesor->apellido,
             'clientes_asignados' => $numClientes,
-            'total_pedidos' => $totalPedidos
+            'total_pedidos' => $facturaCliente,
+            'clientes' => $clientesArray
         ];
-
-        // dd($response);
-
 
         return $response;
     }
-
 }
