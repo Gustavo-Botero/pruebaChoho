@@ -23,25 +23,25 @@ class MostrarClientesPorAsesorTest extends TestCase
         $this->withoutExceptionHandling();
         
         // Creamos los registros para prueba
-        $asesor = new AsesorModel();
-        $clientes = new ClienteModel();
-        $factura = new FacturaModel();
-        $producto = new ProductoModel();
-        $detallePedido = new DetallePedidoModel();
+        $asesorModel = new AsesorModel();
+        $clientesModel = new ClienteModel();
+        $facturaModel = new FacturaModel();
+        $productoModel = new ProductoModel();
+        $detallePedidoModel = new DetallePedidoModel();
 
-        $asesor->factory(5)->create();
-        $clientes->factory(9)->create();
-        $factura->factory(9)->create();
-        $producto->factory(10)->create();
-        $detallePedido->factory(15)->create();
+        $asesorModel->factory(5)->create();
+        $clientesModel->factory(9)->create();
+        $facturaModel->factory(9)->create();
+        $productoModel->factory(10)->create();
+        $detallePedidoModel->factory(15)->create();
 
         // probamos el endpoint
-        $response = $this->getJson('/asesor/clientes/' . $asesor->first()->id);
+        $response = $this->getJson('/asesor/clientes/' . $asesorModel->first()->id);
 
         // Nos aseguramos de que todo esta bien
         $response->assertOk();
         
-        $cliente = $clientes->where('asesor_id', '=', $asesor->first()->id)->get()->toArray();
+        $cliente = $clientesModel->where('asesor_id', '=', $asesorModel->first()->id)->get()->toArray();
         $facturaCliente = 0;
         $clientesArray = [];
         $detallePedidosArray = [];
@@ -49,11 +49,12 @@ class MostrarClientesPorAsesorTest extends TestCase
         
         foreach ($cliente as $rowCliente) {
             $detallePedidosArray = [];
-            $facturas = $factura->where('cliente_id', '=', $rowCliente['id'])->get();
-            
+            $facturas = $facturaModel->where('cliente_id', '=', $rowCliente['id'])->get();
+            //Numero de facturas
             $facturaCliente = $facturaCliente + count($facturas);
+            
             foreach ($facturas as $factura) {
-                $detallePedido = DetallePedidoModel::join('producto as p', 'p.id', '=', 'detalle_pedido.producto_id')
+                $detallePedido = $detallePedidoModel->join('producto as p', 'p.id', '=', 'detalle_pedido.producto_id')
                     ->select(
                         'detalle_pedido.*',
                         'p.tipo as tipo',
@@ -100,8 +101,8 @@ class MostrarClientesPorAsesorTest extends TestCase
         // Revisamos de que la respuesta sea lo esperado
         $response->assertExactJson([
             'data' => [
-                'cod_asesor' => $asesor->first()->id,
-                'name' => $asesor->first()->nombre  . ' ' . $asesor->first()->apellido,
+                'cod_asesor' => $asesorModel->first()->id,
+                'name' => $asesorModel->first()->nombre  . ' ' . $asesorModel->first()->apellido,
                 'clientes_asignados' => count($cliente),
                 'total_pedidos' => $facturaCliente,
                 'clientes' => $clientesArray
