@@ -8,6 +8,7 @@ use App\UseCases\Contracts\Modulos\Asesor\ShowAsesorInterface;
 use App\UseCases\Contracts\Modulos\Asesor\CreateAsesorInterface;
 use App\UseCases\Contracts\Modulos\Asesor\DeleteAsesorInterface;
 use App\UseCases\Contracts\Modulos\Asesor\UpdateAsesorInterface;
+use App\UseCases\Contracts\Modulos\Asesor\ShowClientsByAsesorInterface;
 use App\Repositories\Contracts\Modulos\Asesor\AsesorRepositoryInterface;
 
 class AsesorController extends Controller
@@ -41,6 +42,13 @@ class AsesorController extends Controller
     protected $updateAsesor;
 
     /**
+     * Implementación de ShowClientsByAsesorInterface
+     *
+     * @var ShowClientsByAsesorInterface
+     */
+    protected $showClientsByAsesor;
+
+    /**
      * Implementación de AsesorRepositoryInterface
      *
      * @var AsesorRepositoryInterface
@@ -54,6 +62,7 @@ class AsesorController extends Controller
      * @param ShowAsesorInterface $showAsesor
      * @param DeleteAsesorInterface $deleteAsesor
      * @param UpdateAsesorInterface $updateAsesor
+     * @param ShowClientsByAsesorInterface $showClientsByAsesor
      * @param AsesorRepositoryInterface $asesorRepository
      */
     public function __construct(
@@ -61,12 +70,14 @@ class AsesorController extends Controller
         ShowAsesorInterface $showAsesor,
         DeleteAsesorInterface $deleteAsesor,
         UpdateAsesorInterface $updateAsesor,
+        ShowClientsByAsesorInterface $showClientsByAsesor,
         AsesorRepositoryInterface $asesorRepository
     ) {
         $this->createAsesor = $createAsesor;
         $this->showAsesor = $showAsesor;
         $this->deleteAsesor = $deleteAsesor;
         $this->updateAsesor = $updateAsesor;
+        $this->showClientsByAsesor = $showClientsByAsesor;
         $this->asesorRepository = $asesorRepository;
     }
 
@@ -101,6 +112,11 @@ class AsesorController extends Controller
     public function show(int $id): array
     {
         return $this->showAsesor->handle($id);
+    }
+
+    public function showClientsByAsesor(int $id): array
+    {
+        return $this->showClientsByAsesor->handle($id);
     }
 
     /**
