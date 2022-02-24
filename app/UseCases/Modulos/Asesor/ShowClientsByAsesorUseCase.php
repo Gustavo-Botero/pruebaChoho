@@ -2,27 +2,63 @@
 
 namespace App\UseCases\Modulos\Asesor;
 
-use App\Models\FacturaModel;
-use App\Models\DetallePedidoModel;
 use App\UseCases\Contracts\Modulos\Asesor\ShowClientsByAsesorInterface;
 use App\Repositories\Contracts\Modulos\Asesor\AsesorRepositoryInterface;
 use App\Repositories\Contracts\Modulos\Cliente\ClienteRepositoryInterface;
+use App\Repositories\Contracts\Modulos\Factura\FacturaRepositoryInterface;
+use App\Repositories\Contracts\Modulos\DetallePedido\DetallePedidoRepositoryInterface;
 
 use function PHPUnit\Framework\isEmpty;
 
 class ShowClientsByAsesorUseCase implements ShowClientsByAsesorInterface
 {
 
+    /**
+     * Implementación de AsesorRepositoryInterface
+     *
+     * @var AsesorRepositoryInterface
+     */
     protected $asesorRepository;
 
+    /**
+     * Implementación de ClienteRepositoryInterface
+     *
+     * @var ClienteRepositoryInterface
+     */
     protected $clienteRepository;
 
+    /**
+     * Implementación de FacturaRepositoryInterface
+     *
+     * @var FacturaRepositoryInterface
+     */
+    protected $facturaRepository;
+
+    /**
+     * Implementación de DetallePedidoRepositoryInterface
+     *
+     * @var DetallePedidoRepositoryInterface
+     */
+    protected $detallePedidoRepository;
+
+    /**
+     * Inyección de dependencias
+     *
+     * @param AsesorRepositoryInterface $asesorRepository
+     * @param ClienteRepositoryInterface $clienteRepository
+     * @param FacturaRepositoryInterface $facturaRepository
+     * @param DetallePedidoRepositoryInterface $detallePedidoRepository
+     */
     public function __construct(
         AsesorRepositoryInterface $asesorRepository,
-        ClienteRepositoryInterface $clienteRepository
+        ClienteRepositoryInterface $clienteRepository,
+        FacturaRepositoryInterface $facturaRepository,
+        DetallePedidoRepositoryInterface $detallePedidoRepository
     ) {
         $this->asesorRepository = $asesorRepository;
         $this->clienteRepository = $clienteRepository;
+        $this->facturaRepository = $facturaRepository;
+        $this->detallePedidoRepository = $detallePedidoRepository;
     }
 
     /**
@@ -39,21 +75,15 @@ class ShowClientsByAsesorUseCase implements ShowClientsByAsesorInterface
         $detalleProductoArray = [];
         $asesor = $this->asesorRepository->find($id);
         $clientesByAsesor = $this->clienteRepository->showClientsByAsesor($id);
-        
+
         foreach ($clientesByAsesor as $cliente) {
             $detallePedidosArray = [];
-            
-            $facturas = FacturaModel::where('cliente_id', '=', $cliente['id'])->get()->toArray();
+
+            $facturas = $this->facturaRepository->getFacturaByCliente($cliente['id']);
             $facturaCliente = $facturaCliente + count($facturas);
 
             foreach ($facturas as $factura) {
-                $detallePedido = DetallePedidoModel::join('producto as p', 'p.id', '=', 'detalle_pedido.producto_id')
-                    ->select(
-                        'detalle_pedido.*',
-                        'p.tipo as tipo',
-                        'p.precio as precio'
-                    )
-                    ->where('detalle_pedido.factura_id', $factura['id'])->get()->toArray();
+                $detallePedido = $this->detallePedidoRepository->getPedidoByFactura($factura['id']);
 
                 $detalleProductoArray = [];
                 foreach ($detallePedido as $key => $detalle) {
@@ -90,7 +120,7 @@ class ShowClientsByAsesorUseCase implements ShowClientsByAsesorInterface
                 ]
             );
         }
-        
+
         $response['data'] = [
             'cod_asesor' => $asesor->id,
             'name' => $asesor->nombre . ' ' . $asesor->apellido,
