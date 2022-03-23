@@ -21,4 +21,9 @@ class AsesorModel extends Model
         'correo',
         'direccion',
     ];
+
+    public function clientes()
+    {
+        return $this->hasMany(ClienteModel::class);
+    }
 }
