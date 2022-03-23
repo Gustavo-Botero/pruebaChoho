@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\AsesorModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ClienteModelFactory extends Factory
@@ -21,7 +22,7 @@ class ClienteModelFactory extends Factory
             'celular' => $this->faker->numberBetween(99999999, 9999999999),
             'correo' => $this->faker->unique()->safeEmail(),
             'direccion' => $this->faker->address(),
-            'asesor_id' => $this->faker->numberBetween(1,5)
+            'asesor_id' => AsesorModel::factory()->create()
         ];
     }
 }

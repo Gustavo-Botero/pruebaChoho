@@ -15,4 +15,14 @@ class FacturaModel extends Model
         'id',
         'cliente_id',
     ];
+
+    public function cliente()
+    {
+        return $this->belongsTo(ClienteModel::class, 'cliente_id');
+    }
+
+    public function detallePedidos()
+    {
+        return $this->hasMany(DetallePedidoModel::class, 'factura_id');
+    }
 }

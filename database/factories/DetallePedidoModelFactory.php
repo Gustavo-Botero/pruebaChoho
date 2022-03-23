@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\FacturaModel;
+use App\Models\ProductoModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class DetallePedidoModelFactory extends Factory
@@ -14,8 +16,8 @@ class DetallePedidoModelFactory extends Factory
     public function definition()
     {
         return [
-            'factura_id' => rand(1, 9),
-            'producto_id' => rand(1, 9),
+            'factura_id' => FacturaModel::factory()->create(),
+            'producto_id' => ProductoModel::factory()->create(),
             'cantidad' => rand(1, 10)
         ];
     }
