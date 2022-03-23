@@ -17,4 +17,14 @@ class DetallePedidoModel extends Model
         'producto_id',
         'cantidad',
     ];
+
+    public function factura()
+    {
+        return $this->belongsTo(FacturaModel::class, 'factura_id');
+    }
+
+    public function producto()
+    {
+        return $this->belongsTo(ProductoModel::class, 'producto_id');
+    }
 }

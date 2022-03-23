@@ -3,7 +3,6 @@
 namespace App\UseCases\Modulos\Asesor;
 
 use App\UseCases\Contracts\Modulos\Asesor\ShowClientsByAsesorInterface;
-use App\Repositories\Contracts\Modulos\Asesor\AsesorRepositoryInterface;
 use App\Repositories\Contracts\Modulos\Cliente\ClienteRepositoryInterface;
 use App\Repositories\Contracts\Modulos\Factura\FacturaRepositoryInterface;
 use App\Repositories\Contracts\Modulos\DetallePedido\DetallePedidoRepositoryInterface;
@@ -12,14 +11,6 @@ use function PHPUnit\Framework\isEmpty;
 
 class ShowClientsByAsesorUseCase implements ShowClientsByAsesorInterface
 {
-
-    /**
-     * Implementación de AsesorRepositoryInterface
-     *
-     * @var AsesorRepositoryInterface
-     */
-    protected $asesorRepository;
-
     /**
      * Implementación de ClienteRepositoryInterface
      *
@@ -44,18 +35,15 @@ class ShowClientsByAsesorUseCase implements ShowClientsByAsesorInterface
     /**
      * Inyección de dependencias
      *
-     * @param AsesorRepositoryInterface $asesorRepository
      * @param ClienteRepositoryInterface $clienteRepository
      * @param FacturaRepositoryInterface $facturaRepository
      * @param DetallePedidoRepositoryInterface $detallePedidoRepository
      */
     public function __construct(
-        AsesorRepositoryInterface $asesorRepository,
         ClienteRepositoryInterface $clienteRepository,
         FacturaRepositoryInterface $facturaRepository,
         DetallePedidoRepositoryInterface $detallePedidoRepository
     ) {
-        $this->asesorRepository = $asesorRepository;
         $this->clienteRepository = $clienteRepository;
         $this->facturaRepository = $facturaRepository;
         $this->detallePedidoRepository = $detallePedidoRepository;
@@ -69,63 +57,46 @@ class ShowClientsByAsesorUseCase implements ShowClientsByAsesorInterface
      */
     public function handle(int $id): array
     {
-        $facturaCliente = 0;
-        $clientesArray = [];
-        $detallePedidosArray = [];
-        $detalleProductoArray = [];
-        $asesor = $this->asesorRepository->find($id);
         $clientesByAsesor = $this->clienteRepository->showClientsByAsesor($id);
-
-        foreach ($clientesByAsesor as $cliente) {
+        $numClientes = 0;
+        $totalPedidos = 0;
+        $clientesArray = [];
+        foreach ($clientesByAsesor as $rowCliente) {
+            $numClientes++;
+            $totalPedidos += count($rowCliente['facturas']);
             $detallePedidosArray = [];
+            foreach ($rowCliente['facturas'] as $facturas) {
+                $productosArray = [];
+                foreach ($facturas['detalle_pedidos'] as $pedidos) {
 
-            $facturas = $this->facturaRepository->getFacturaByCliente($cliente['id']);
-            $facturaCliente = $facturaCliente + count($facturas);
-
-            foreach ($facturas as $factura) {
-                $detallePedido = $this->detallePedidoRepository->getPedidoByFactura($factura['id']);
-
-                $detalleProductoArray = [];
-                foreach ($detallePedido as $key => $detalle) {
-
-                    array_push(
-                        $detalleProductoArray,
-                        [
-                            'id_producto' => $detalle['producto_id'],
-                            'tipo' => $detalle['tipo'],
-                            'cantidad' => $detalle['cantidad'],
-                            'valor_unitario' => $detalle['precio']
-                        ]
-                    );
+                    array_push($productosArray, [
+                        'id_producto' => $pedidos['producto']['id'],
+                        'tipo' => $pedidos['producto']['tipo'],
+                        'cantidad' => $pedidos['cantidad'],
+                        'valor_unitario' => $pedidos['producto']['precio']
+                    ]);
                 }
 
-                array_push(
-                    $detallePedidosArray,
-                    [
-                        'id_pedido' => $factura['id'],
-                        'total_productos' => count($detallePedido),
-                        'fecha' => !isEmpty($detallePedido) ?  $detallePedido[0]['created_at'] : '',
-                        'productos' => $detalleProductoArray
-                    ]
-                );
+                array_push($detallePedidosArray, [
+                    'id_pedido' => $facturas['id'],
+                    'total_productos' => count($facturas['detalle_pedidos']),
+                    'productos' => $productosArray
+                ]);
             }
 
-            array_push(
-                $clientesArray,
-                [
-                    'id_cliente' => $cliente['id'],
-                    'total_pedidos' => count($facturas),
-                    'name' => $cliente['nombre'],
-                    'detalle_pedidos' => $detallePedidosArray
-                ]
-            );
+            array_push($clientesArray, [
+                'id_cliente' => $rowCliente['id'],
+                'total_pedidos' => count($rowCliente['facturas']),
+                'nombre' => $rowCliente['nombre'] . ' ' . $rowCliente['apellido'],
+                'detalle_pedidos' => $detallePedidosArray
+            ]);
         }
 
         $response['data'] = [
-            'cod_asesor' => $asesor->id,
-            'name' => $asesor->nombre . ' ' . $asesor->apellido,
-            'clientes_asignados' => count($clientesByAsesor),
-            'total_pedidos' => $facturaCliente,
+            'cod_asesor' => $clientesByAsesor[0]['asesor']['id'],
+            'name' => $clientesByAsesor[0]['asesor']['nombre'] . ' ' . $clientesByAsesor[0]['asesor']['apellido'],
+            'clientes_asignados' => $numClientes,
+            'total_pedidos' => $totalPedidos,
             'clientes' => $clientesArray
         ];
 
