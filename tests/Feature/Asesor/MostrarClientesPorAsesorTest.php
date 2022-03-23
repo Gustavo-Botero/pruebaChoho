@@ -21,90 +21,76 @@ class MostrarClientesPorAsesorTest extends TestCase
     {
         // Metodo para que me muestre las excepciones
         $this->withoutExceptionHandling();
-        
-        // Creamos los registros para prueba
-        $asesorModel = new AsesorModel();
-        $clientesModel = new ClienteModel();
-        $facturaModel = new FacturaModel();
-        $productoModel = new ProductoModel();
-        $detallePedidoModel = new DetallePedidoModel();
 
-        $asesorModel->factory(5)->create();
-        $clientesModel->factory(9)->create();
-        $facturaModel->factory(9)->create();
-        $productoModel->factory(10)->create();
-        $detallePedidoModel->factory(15)->create();
+        // Creamos los registros para prueba
+        $asesorModel = AsesorModel::factory()->create();
+        $clienteModel = ClienteModel::factory(3)->create([
+            'asesor_id' => $asesorModel->id
+        ]);
+        $productoModel = ProductoModel::factory(3)->create();;
+        $facturaModel = FacturaModel::factory(3)->create([
+            'cliente_id' => $clienteModel[0]->id
+        ]);
+        // dd($facturaModel);
+        $detallePedidoModel = DetallePedidoModel::factory(3)->create([
+            'factura_id' => $facturaModel[0]->id,
+            'producto_id' => $productoModel[0]->id
+        ]);
 
         // probamos el endpoint
-        $response = $this->getJson('/asesor/clientes/' . $asesorModel->first()->id);
+        $response = $this->getJson('/asesor/clientes/' . $asesorModel->id);
 
         // Nos aseguramos de que todo esta bien
         $response->assertOk();
-        
-        $cliente = $clientesModel->where('asesor_id', '=', $asesorModel->first()->id)->get()->toArray();
-        $facturaCliente = 0;
+
+        $cliente = ClienteModel::with('asesor')
+            ->with('facturas')
+            ->with('facturas.detallePedidos')
+            ->with('facturas.detallePedidos.producto')
+            ->where('asesor_id', '=', $asesorModel->id)
+            ->get()->toArray();
+
+        $numClientes = 0;
+        $totalPedidos = 0;
         $clientesArray = [];
-        $detallePedidosArray = [];
-        $detalleProductoArray = [];
-        
         foreach ($cliente as $rowCliente) {
+            $numClientes++;
+            $totalPedidos += count($rowCliente['facturas']);
             $detallePedidosArray = [];
-            $facturas = $facturaModel->where('cliente_id', '=', $rowCliente['id'])->get();
-            //Numero de facturas
-            $facturaCliente = $facturaCliente + count($facturas);
-            
-            foreach ($facturas as $factura) {
-                $detallePedido = $detallePedidoModel->join('producto as p', 'p.id', '=', 'detalle_pedido.producto_id')
-                    ->select(
-                        'detalle_pedido.*',
-                        'p.tipo as tipo',
-                        'p.precio as precio'
-                    )
-                    ->where('detalle_pedido.factura_id', $factura['id'])->get()->toArray();
+            foreach ($rowCliente['facturas'] as $facturas) {
+                $productosArray = [];
+                foreach ($facturas['detalle_pedidos'] as $pedidos) {
 
-                $detalleProductoArray = [];
-                foreach ($detallePedido as $key => $detalle) {
-
-                    array_push(
-                        $detalleProductoArray,
-                        [
-                            'id_producto' => $detalle['producto_id'],
-                            'tipo' => $detalle['tipo'],
-                            'cantidad' => $detalle['cantidad'],
-                            'valor_unitario' => $detalle['precio']
-                        ]
-                    );
+                    array_push($productosArray, [
+                        'id_producto' => $pedidos['producto']['id'],
+                        'tipo' => $pedidos['producto']['tipo'],
+                        'cantidad' => $pedidos['cantidad'],
+                        'valor_unitario' => $pedidos['producto']['precio']
+                    ]);
                 }
 
-                array_push(
-                    $detallePedidosArray,
-                    [
-                        'id_pedido' => $factura['id'],
-                        'total_productos' => count($detallePedido),
-                        'fecha' => !isEmpty($detallePedido) ?  $detallePedido[0]['created_at'] : '',
-                        'productos' => $detalleProductoArray
-                    ]
-                );
+                array_push($detallePedidosArray, [
+                    'id_pedido' => $facturas['id'],
+                    'total_productos' => count($facturas['detalle_pedidos']),
+                    'productos' => $productosArray
+                ]);
             }
-            
-            array_push(
-                $clientesArray,
-                [
-                    'id_cliente' => $rowCliente['id'],
-                    'total_pedidos' => count($facturas),
-                    'name' => $rowCliente['nombre'],
-                    'detalle_pedidos' => $detallePedidosArray
-                ]
-            );
+
+            array_push($clientesArray, [
+                'id_cliente' => $rowCliente['id'],
+                'total_pedidos' => count($rowCliente['facturas']),
+                'nombre' => $rowCliente['nombre'] . ' ' . $rowCliente['apellido'],
+                'detalle_pedidos' => $detallePedidosArray
+            ]);
         }
-        
+
         // Revisamos de que la respuesta sea lo esperado
         $response->assertExactJson([
             'data' => [
-                'cod_asesor' => $asesorModel->first()->id,
-                'name' => $asesorModel->first()->nombre  . ' ' . $asesorModel->first()->apellido,
-                'clientes_asignados' => count($cliente),
-                'total_pedidos' => $facturaCliente,
+                'cod_asesor' => $asesorModel->id,
+                'name' => $asesorModel->nombre  . ' ' . $asesorModel->apellido,
+                'clientes_asignados' => $numClientes,
+                'total_pedidos' => $totalPedidos,
                 'clientes' => $clientesArray
             ]
         ]);

@@ -22,4 +22,14 @@ class ClienteModel extends Model
         'direccion',
         'asesor_id',
     ];
+
+    public function asesor()
+    {
+        return $this->belongsTo(AsesorModel::class, 'asesor_id');
+    }
+
+    public function facturas()
+    {
+        return $this->hasMany(FacturaModel::class, 'cliente_id');
+    }
 }

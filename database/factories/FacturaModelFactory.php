@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ClienteModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class FacturaModelFactory extends Factory
@@ -14,7 +15,7 @@ class FacturaModelFactory extends Factory
     public function definition()
     {
         return [
-            'cliente_id' => $this->faker->numberBetween(1, 9)
+            'cliente_id' => ClienteModel::factory()->create()
         ];
     }
 }
