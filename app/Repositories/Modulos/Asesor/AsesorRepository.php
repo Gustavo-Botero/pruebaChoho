@@ -45,13 +45,13 @@ class AsesorRepository implements AsesorRepositoryInterface
     public function create(Request $request): AsesorModel
     {
         $asesor = new $this->asesor;
-        $asesor->nombre = $request->data['nombre'];
-        $asesor->apellido = $request->data['apellido'];
-        $asesor->tipo_documento = $request->data['tipo_documento'];
-        $asesor->numero_documento = $request->data['numero_documento'];
-        $asesor->celular = $request->data['celular'];
-        $asesor->correo = $request->data['correo'];
-        $asesor->direccion = $request->data['direccion'];
+        $asesor->nombre = $request->nombre;
+        $asesor->apellido = $request->apellido;
+        $asesor->tipo_documento = $request->tipo_documento;
+        $asesor->numero_documento = $request->numero_documento;
+        $asesor->celular = $request->celular;
+        $asesor->correo = $request->correo;
+        $asesor->direccion = $request->direccion;
         $asesor->save();
 
         return $asesor;
@@ -89,13 +89,13 @@ class AsesorRepository implements AsesorRepositoryInterface
     public function update(int $id, Request $request): AsesorModel
     {
         $asesor = $this->find($id);
-        $asesor->nombre = $request->data['nombre'];
-        $asesor->apellido = $request->data['apellido'];
-        $asesor->tipo_documento = $request->data['tipo_documento'];
-        $asesor->numero_documento = $request->data['numero_documento'];
-        $asesor->celular = $request->data['celular'];
-        $asesor->correo = $request->data['correo'];
-        $asesor->direccion = $request->data['direccion'];
+        $asesor->nombre = $request->nombre;
+        $asesor->apellido = $request->apellido;
+        $asesor->tipo_documento = $request->tipo_documento;
+        $asesor->numero_documento = $request->numero_documento;
+        $asesor->celular = $request->celular;
+        $asesor->correo = $request->correo;
+        $asesor->direccion = $request->direccion;
         $asesor->update();
 
         return $asesor;

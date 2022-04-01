@@ -46,7 +46,7 @@ class CreateAsesorUseCase implements CreateAsesorInterface
                 'apellido' => $asesor->apellido,
                 'tipo_documento' => $asesor->tipo_documento,
                 'numero_documento' => $asesor->numero_documento,
-                'celular' => $asesor->cedular,
+                'celular' => $asesor->celular,
                 'correo' => $asesor->correo,
                 'direccion' => $asesor->direccion
             ]
