@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\View\View;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\AsesorRequest;
 use App\UseCases\Contracts\Modulos\Asesor\ShowAsesorInterface;
 use App\UseCases\Contracts\Modulos\Asesor\CreateAsesorInterface;
 use App\UseCases\Contracts\Modulos\Asesor\DeleteAsesorInterface;
@@ -82,17 +83,6 @@ class AsesorController extends Controller
     }
 
     /**
-     * Función para eliminar un asesors
-     *
-     * @param integer $id
-     * @return array
-     */
-    public function destroy(int $id): array
-    {
-        return $this->deleteAsesor->handle($id);
-    }
-
-    /**
      * Función para enviar la información necesaria a la vista principal
      *
      * @return View
@@ -101,6 +91,17 @@ class AsesorController extends Controller
     {
         $asesor = $this->asesorRepository->all();
         return view('asesor.index', compact('asesor'));
+    }
+
+    /**
+     * Funcrión para crear un asesor
+     *
+     * @param AsesorRequest $request
+     * @return array
+     */
+    public function store(AsesorRequest $request): array
+    {
+        return $this->createAsesor->handle($request);
     }
 
     /**
@@ -114,31 +115,37 @@ class AsesorController extends Controller
         return $this->showAsesor->handle($id);
     }
 
-    public function showClientsByAsesor(int $id): array
-    {
-        return $this->showClientsByAsesor->handle($id);
-    }
-
-    /**
-     * Funcrión para crear un asesor
-     *
-     * @param Request $request
-     * @return array
-     */
-    public function store(Request $request): array
-    {
-        return $this->createAsesor->handle($request);
-    }
-
     /**
      * Función para actualizar un asesor
      *
-     * @param Request $request
+     * @param AsesorRequest $request
      * @param integer $id
      * @return array
      */
-    public function update(Request $request, int $id): array
+    public function update(AsesorRequest $request, int $id): array
     {
         return $this->updateAsesor->handle($id, $request);
+    }
+
+    /**
+     * Función para eliminar un asesors
+     *
+     * @param integer $id
+     * @return array
+     */
+    public function destroy(int $id): array
+    {
+        return $this->deleteAsesor->handle($id);
+    }
+
+    /**
+     * Función para consultar los clientes que tiene cada asesor
+     *
+     * @param integer $id
+     * @return array
+     */
+    public function showClientesByAsesor(int $id): array
+    {
+        return $this->showClientsByAsesor->handle($id);
     }
 }
